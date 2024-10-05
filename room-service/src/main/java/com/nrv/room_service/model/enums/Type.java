@@ -1,7 +1,7 @@
 package com.nrv.room_service.model.enums;
 
 /**
- * Enum representing types of room available. It also contains PricePerNight of
+ * Enum representing types of room availablility. It also contains PricePerNight of
  * that particular room.
  *
  * @author Nirav Parekh

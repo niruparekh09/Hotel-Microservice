@@ -3,6 +3,7 @@ package com.nrv.room_service.service.implementation;
 import com.nrv.room_service.exception.ResourceNotFoundException;
 import com.nrv.room_service.log.RoomLogMessage;
 import com.nrv.room_service.model.Room;
+import com.nrv.room_service.model.enums.Availability;
 import com.nrv.room_service.repository.RoomRepository;
 import com.nrv.room_service.request.RoomInsertionRequest;
 import com.nrv.room_service.response.APIResponse;
@@ -64,17 +65,19 @@ public class RoomServiceImpl implements RoomService {
     public RoomResponse updateARoom(String roomId, RoomInsertionRequest updateRoom) {
         deleteRoom(roomId);
         RoomResponse response = addARoom(updateRoom);
-        logger.info(RoomLogMessage.ROOM_UPDATE.getMessage(),roomId);
+        logger.info(RoomLogMessage.ROOM_UPDATE.getMessage(), roomId);
         return response;
     }
 
     @Override
-    public APIResponse updateRoomAvailability(String roomId, boolean updateAvailability) {
+    public RoomResponse updateRoomAvailability(String roomId, String updateAvailability) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found with id: " + roomId));
-        room.setAvailable(updateAvailability); // Updating room availability
+        room.setAvailability(Availability.valueOf(updateAvailability.toUpperCase())); // Updating room availability
+        Room updatedRoom = roomRepository.save(room);
+        RoomResponse response = getRoomResponse(updatedRoom);
         logger.info(RoomLogMessage.ROOM_UPDATE.getMessage(), room.getRoomId());
-        return new APIResponse("Room Availability update with id: " + room.getRoomId());
+        return response;
     }
 
     @Override

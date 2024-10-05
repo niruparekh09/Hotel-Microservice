@@ -1,13 +1,12 @@
 package com.nrv.room_service.service.implementation;
 
 import com.nrv.room_service.model.Room;
+import com.nrv.room_service.model.enums.Availability;
 import com.nrv.room_service.model.enums.Type;
 import com.nrv.room_service.request.RoomInsertionRequest;
-import com.nrv.room_service.request.RoomUpdateRequest;
 import com.nrv.room_service.response.RoomResponse;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 /**
  * Helper class for Room Service.
@@ -33,7 +32,7 @@ public class RoomServiceHelper {
                 .roomType(room.getRoomType().name())
                 .floor(room.getFloor())
                 .image(room.getImage())
-                .available(room.getAvailable())
+                .availability(room.getAvailability().name())
                 .roomNumber(room.getRoomNumber())
                 .pricePerNight(room.getPricePerNight())
                 .description(room.getDescription())
@@ -44,19 +43,19 @@ public class RoomServiceHelper {
         // We are taking room type in form of string
         Type roomType = Type.valueOf(newRoom.getRoomType().toUpperCase());
         return buildRoom(newRoom.getRoomNumber(), roomType, newRoom.getImage(), newRoom.getFloor(),
-                newRoom.getAvailable(), newRoom.getDescription());
+                newRoom.getAvailability(), newRoom.getDescription());
     }
 
 
     // Helper method to reduce duplication in room creation logic
     private static Room buildRoom(String roomNumber, Type roomType, String image, int floor,
-                                  boolean available, String description) {
+                                  String availability, String description) {
         return Room.builder()
                 .roomNumber(roomNumber)
                 .roomType(roomType)
                 .image(image)
                 .floor(floor)
-                .available(available)
+                .availability(Availability.valueOf(availability.toUpperCase()))
                 .pricePerNight(roomType.getPricePerNight())
                 .description(description)
                 .build();

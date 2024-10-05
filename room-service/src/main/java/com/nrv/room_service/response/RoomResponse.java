@@ -27,7 +27,7 @@ public class RoomResponse {
 
     private Double pricePerNight;
 
-    private Boolean available;
+    private String availability;
 
     private String image;
 

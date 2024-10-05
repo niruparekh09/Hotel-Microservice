@@ -29,7 +29,7 @@ public class RoomUpdateRequest {
     private String roomType;
 
     @NotNull(message = "Availability status is required")
-    private Boolean available;
+    private String availability;
 
     @NotBlank(message = "Image URL is required")
     private String image;

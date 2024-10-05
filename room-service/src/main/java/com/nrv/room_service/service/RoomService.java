@@ -62,10 +62,10 @@ public interface RoomService {
      * @param roomId id of room to be updated
      * @param updateAvailability update availability of a room
      * @author Nirav Parekh
-     * @see APIResponse
+     * @see RoomResponse
      * @since 1.0
      */
-    APIResponse updateRoomAvailability(String roomId, boolean updateAvailability);
+    RoomResponse updateRoomAvailability(String roomId, String updateAvailability);
 
     /**
      * Method to delete a room information.

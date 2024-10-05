@@ -1,6 +1,8 @@
 package com.nrv.room_service.controller;
 
+import com.nrv.room_service.model.enums.Availability;
 import com.nrv.room_service.request.RoomInsertionRequest;
+import com.nrv.room_service.request.UpdateRoomAvailability;
 import com.nrv.room_service.response.APIResponse;
 import com.nrv.room_service.response.RoomResponse;
 import com.nrv.room_service.service.RoomService;
@@ -97,14 +99,14 @@ public class RoomController {
      *
      * @return ResponseEntity with the operation result.
      * @author Nirav Parekh
-     * @see APIResponse
+     * @see RoomResponse
      * @since 1.0
      */
     @PutMapping("/availability/{id}")
-    ResponseEntity<APIResponse> updateAvailabilityOfRoom(@PathVariable String id, @RequestBody boolean availability) {
+    ResponseEntity<RoomResponse> updateAvailabilityOfRoom(@PathVariable String id, @RequestBody UpdateRoomAvailability availability) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(service.updateRoomAvailability(id, availability));
+                .body(service.updateRoomAvailability(id, availability.getAvailability()));
     }
 
     /**

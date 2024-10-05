@@ -1,5 +1,6 @@
 package com.nrv.room_service.model;
 
+import com.nrv.room_service.model.enums.Availability;
 import com.nrv.room_service.model.enums.Type;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -37,7 +38,7 @@ public class Room {
     private Type roomType; // Enum can be used directly
 
     private Double pricePerNight;
-    private Boolean available;
+    private Availability availability;
     private String image;
 
     @Min(value = 0, message = "Floor must be non-negative")
