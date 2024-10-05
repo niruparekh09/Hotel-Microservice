@@ -1,6 +1,9 @@
 package com.nrv.room_service.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Response object to provide client information about a room.
@@ -11,6 +14,9 @@ import lombok.Data;
  * @since 1.0
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RoomResponse {
 
     private String roomId;
