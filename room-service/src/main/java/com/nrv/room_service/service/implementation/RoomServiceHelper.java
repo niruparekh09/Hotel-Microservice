@@ -12,7 +12,7 @@ import java.util.List;
  * Helper class for Room Service.
  *
  * @author Nirav Parekh
- * @see com.nrv.room_service.service.implementation.RoomServiceImpl
+ * @see RoomServiceImpl
  * @since 1.0
  */
 public class RoomServiceHelper {
