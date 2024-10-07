@@ -147,8 +147,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse updateABooking(String bookingId, BookingInsertionRequest updateBooking) {
-        deleteABooking(bookingId); // Deleting a booking
-        BookingResponse bookingResponse = addABooking(updateBooking);// Saving the updated booking
+        Booking existingBooking = repository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking with ID: " + bookingId + " not found"));
+        checkUpdate(updateBooking, existingBooking); // Checking fields for update by passing both objects
+        Booking persistedBooking = repository.save(existingBooking);
+        BookingResponse bookingResponse = getBookingResponse(persistedBooking);
+
         logger.info(BookingLogMessage.BOOKING_UPDATE.getMessage(), bookingResponse.getBookingId());
         return bookingResponse;
     }
@@ -159,11 +163,11 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
         repository.delete(booking);
         updateAvailabilityOnDelete(booking);
-        logger.info(BookingLogMessage.ROOM_DELETE.getMessage(), booking.getBookingId());
+        logger.info(BookingLogMessage.BOOKING_DELETE.getMessage(), booking.getBookingId());
         return new APIResponse("Booking deleted by id: " + booking.getBookingId());
     }
 
-    private void updateAvailabilityOnDelete(Booking deletedBooking){
+    private void updateAvailabilityOnDelete(Booking deletedBooking) {
         RoomResponse roomResponse = roomClient.updateAvailabilityOfRoom
                 (deletedBooking.getRoomId(),
                         UpdateRoomAvailability.builder()

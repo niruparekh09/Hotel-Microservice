@@ -54,4 +54,19 @@ public class BookingServiceHelper {
                 .totalPrice(totalPrice)
                 .build();
     }
+
+    public static void checkUpdate(BookingInsertionRequest updateBooking, Booking existingBooking){
+        if (!updateBooking.getCustomerId().isEmpty()) {
+            existingBooking.setCustomerId(updateBooking.getCustomerId());
+        }
+        if (!updateBooking.getRoomId().isEmpty()) {
+            existingBooking.setRoomId(updateBooking.getRoomId());
+        }
+        if (updateBooking.getCheckInDate() != null) {
+            existingBooking.setCheckInDate(updateBooking.getCheckInDate());
+        }
+        if (updateBooking.getCheckOutDate() != null) {
+            existingBooking.setCheckOutDate(updateBooking.getCheckOutDate());
+        }
+    }
 }
