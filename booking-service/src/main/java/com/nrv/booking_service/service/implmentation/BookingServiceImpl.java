@@ -98,11 +98,18 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse updateABooking(String bookingId, BookingInsertionRequest updateBooking) {
-        return null;
+        deleteABooking(bookingId); // Deleting a booking
+        BookingResponse bookingResponse = addABooking(updateBooking);// Saving the updated booking
+        logger.info(BookingLogMessage.BOOKING_UPDATE.getMessage(), bookingResponse.getBookingId());
+        return bookingResponse;
     }
 
     @Override
     public APIResponse deleteABooking(String bookingId) {
-        return null;
+        Booking booking = repository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found with id: " + bookingId));
+        repository.delete(booking);
+        logger.info(BookingLogMessage.ROOM_DELETE.getMessage(), booking.getBookingId());
+        return new APIResponse("Booking deleted by id: " + booking.getBookingId());
     }
 }
