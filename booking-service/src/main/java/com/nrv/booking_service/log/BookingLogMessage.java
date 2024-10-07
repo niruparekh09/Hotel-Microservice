@@ -13,7 +13,7 @@ public enum BookingLogMessage {
     BOOKING_GET_BY_CUSTOMER("Get a booking by customer id: {}"),
     BOOKING_ADD("Add a booking by id: {}"),
     BOOKING_UPDATE("Update a booking by id: {}"),
-    BOOKING_DELETE("Delete a room by id: {}");
+    BOOKING_DELETE("Delete a booking by id: {}");
 
 
     private final String message;
