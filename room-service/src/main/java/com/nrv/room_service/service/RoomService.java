@@ -1,7 +1,6 @@
 package com.nrv.room_service.service;
 
 import com.nrv.room_service.request.RoomInsertionRequest;
-import com.nrv.room_service.request.RoomUpdateRequest;
 import com.nrv.room_service.response.APIResponse;
 import com.nrv.room_service.response.RoomResponse;
 
@@ -48,10 +47,10 @@ public interface RoomService {
     /**
      * Method to update a room.
      *
-     * @param roomId id of room to be updated
+     * @param roomId     id of room to be updated
      * @param updateRoom update room
      * @author Nirav Parekh
-     * @see RoomUpdateRequest
+     * @see RoomInsertionRequest
      * @since 1.0
      */
     RoomResponse updateARoom(String roomId, RoomInsertionRequest updateRoom);
@@ -59,7 +58,7 @@ public interface RoomService {
     /**
      * Method to update availability of room.
      *
-     * @param roomId id of room to be updated
+     * @param roomId             id of room to be updated
      * @param updateAvailability update availability of a room
      * @author Nirav Parekh
      * @see RoomResponse

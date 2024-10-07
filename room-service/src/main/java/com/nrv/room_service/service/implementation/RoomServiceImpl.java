@@ -63,8 +63,11 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponse updateARoom(String roomId, RoomInsertionRequest updateRoom) {
-        deleteRoom(roomId);
-        RoomResponse response = addARoom(updateRoom);
+        Room existingRoom = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room with ID: " + roomId + " not found"));
+        checkUpdate(updateRoom, existingRoom);
+        Room persistedRoom = roomRepository.save(existingRoom);
+        RoomResponse response = getRoomResponse(persistedRoom);
         logger.info(RoomLogMessage.ROOM_UPDATE.getMessage(), roomId);
         return response;
     }

@@ -60,4 +60,28 @@ public class RoomServiceHelper {
                 .description(description)
                 .build();
     }
+
+    public static void checkUpdate(RoomInsertionRequest updateRoom, Room existingRoom) {
+        // Update fields selectively
+        if (!updateRoom.getRoomNumber().isEmpty()) {
+            existingRoom.setRoomNumber(updateRoom.getRoomNumber());
+        }
+        if (updateRoom.getRoomType() != null) {
+            Type roomType = Type.valueOf(updateRoom.getRoomType().toUpperCase());
+            existingRoom.setRoomType(roomType);
+            existingRoom.setPricePerNight(roomType.getPricePerNight());
+        }
+        if (updateRoom.getAvailability() != null) {
+            existingRoom.setAvailability(Availability.valueOf(updateRoom.getAvailability()));
+        }
+        if (!updateRoom.getImage().isEmpty()) {
+            existingRoom.setImage(updateRoom.getImage());
+        }
+        if (updateRoom.getFloor() != null) {
+            existingRoom.setFloor(updateRoom.getFloor());
+        }
+        if (!updateRoom.getDescription().isEmpty()) {
+            existingRoom.setDescription(updateRoom.getDescription());
+        }
+    }
 }

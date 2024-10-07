@@ -1,6 +1,5 @@
 package com.nrv.room_service.controller;
 
-import com.nrv.room_service.model.enums.Availability;
 import com.nrv.room_service.request.RoomInsertionRequest;
 import com.nrv.room_service.request.UpdateRoomAvailability;
 import com.nrv.room_service.response.APIResponse;
@@ -18,7 +17,7 @@ import java.util.List;
  * Controller class for Room API. Base API {@code /api/rooms}
  *
  * @author Nirav Parekh
- * @see com.nrv.room_service.service.RoomService
+ * @see RoomService
  * @since 1.0
  */
 @RestController
