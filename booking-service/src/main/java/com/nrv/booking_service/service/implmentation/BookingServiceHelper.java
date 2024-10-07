@@ -40,7 +40,7 @@ public class BookingServiceHelper {
     }
 
     // Method to add new room
-    public static Booking getBooking(BookingInsertionRequest newBookingRequest, double totalPrice){
+    public static Booking getBooking(BookingInsertionRequest newBookingRequest, double totalPrice) {
         if (newBookingRequest == null) {
             throw new RuntimeException("Booking cannot be null");
         }

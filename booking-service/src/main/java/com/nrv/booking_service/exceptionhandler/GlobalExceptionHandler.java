@@ -1,6 +1,7 @@
 package com.nrv.booking_service.exceptionhandler;
 
 import com.nrv.booking_service.exception.ResourceNotFoundException;
+import com.nrv.booking_service.exception.RoomAlreadyBookedException;
 import com.nrv.booking_service.response.APIResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleResourceNotFound(ResourceNotFoundException ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(RoomAlreadyBookedException.class)
+    public ResponseEntity<?> handleResourceNotFound(RoomAlreadyBookedException ex) {
+        logger.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new APIResponse(ex.getMessage()));
     }
 
     /*All other exceptions*/

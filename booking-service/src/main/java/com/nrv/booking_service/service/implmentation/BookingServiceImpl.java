@@ -1,7 +1,9 @@
 package com.nrv.booking_service.service.implmentation;
 
 import com.nrv.booking_service.client.RoomClient;
+import com.nrv.booking_service.exception.InvalidArgumentException;
 import com.nrv.booking_service.exception.ResourceNotFoundException;
+import com.nrv.booking_service.exception.RoomAlreadyBookedException;
 import com.nrv.booking_service.log.BookingLogMessage;
 import com.nrv.booking_service.model.Booking;
 import com.nrv.booking_service.repository.BookingRepository;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -66,11 +69,15 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse addABooking(BookingInsertionRequest newBooking) {
+        // Check if room is booked or not
+        checkBooking(newBooking.getRoomId(), newBooking);
         // Once we do a booking we will put Room in HOLD
-        RoomResponse roomResponse = getRoomResponse(newBooking);
+        RoomResponse roomResponse = updateAvailabilityOfRoom(newBooking);
         int totalStay = (int) ChronoUnit.DAYS.between
                 (newBooking.getCheckInDate(),
                         newBooking.getCheckOutDate());
+        // If a person is checking in and out in single day then he still needs to pay one nights price
+        totalStay = (totalStay == 0) ? 1 : totalStay;
         Booking booking = getBooking(newBooking, totalStay * roomResponse.getPricePerNight());
         repository.save(booking);
         BookingResponse bookingResponse = getBookingResponse(booking);
@@ -78,7 +85,47 @@ public class BookingServiceImpl implements BookingService {
         return bookingResponse;
     }
 
-    private RoomResponse getRoomResponse(BookingInsertionRequest newBooking) {
+    // Checking Booking Details
+    private void checkBooking(String roomId, BookingInsertionRequest newBooking) {
+
+        // Check if date is not in past
+        if (newBooking.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new InvalidArgumentException("Check-In date can not be In Past");
+        }
+
+        // Checking if date is invalid
+        if (newBooking.getCheckInDate().isAfter(newBooking.getCheckOutDate())) {
+            throw new InvalidArgumentException("Check-Out date can not be before Check-In date");
+        }
+
+        RoomResponse roomResponse = roomClient.getARoom(roomId);
+        logger.info("Fetch room with id: {} from Room Client", roomResponse.getRoomId());
+        // Checking If room is available or not
+        if (roomResponse.getAvailability().equals("BOOKED")
+                || roomResponse.getAvailability().equals("HOLD")) {
+            throw new RoomAlreadyBookedException("Room with id: " + roomId + " is already booked");
+        }
+
+        // Checking if room is already booked for following date
+        List<Booking> bookingList = repository.findByRoomId(roomId);
+        // No booking available with this room id
+        if (bookingList.isEmpty()) {
+            return;
+        }
+
+        for (Booking existingBooking : bookingList) {
+            if (existingBooking.getBookingId().equals(roomResponse.getRoomId())) {
+                // Check for overlap
+                if (newBooking.getCheckInDate().isBefore(existingBooking.getCheckOutDate()) &&
+                        newBooking.getCheckOutDate().isAfter(existingBooking.getCheckInDate().plusDays(1))) {
+                    throw new RoomAlreadyBookedException("Room with id: " + roomId + " is already booked");
+                }
+            }
+        }
+    }
+
+    // Updating Availability of room
+    private RoomResponse updateAvailabilityOfRoom(BookingInsertionRequest newBooking) {
         RoomResponse roomResponse = roomClient.updateAvailabilityOfRoom
                 (newBooking.getRoomId(),
                         UpdateRoomAvailability.builder()
@@ -93,6 +140,8 @@ public class BookingServiceImpl implements BookingService {
                                     .build());
 
         }
+        logger.info("Updated room with id: {} from Room Client. It's now {}"
+                , roomResponse.getRoomId(), roomResponse.getAvailability());
         return roomResponse;
     }
 
@@ -107,9 +156,18 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public APIResponse deleteABooking(String bookingId) {
         Booking booking = repository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Room not found with id: " + bookingId));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
         repository.delete(booking);
+        updateAvailabilityOnDelete(booking);
         logger.info(BookingLogMessage.ROOM_DELETE.getMessage(), booking.getBookingId());
         return new APIResponse("Booking deleted by id: " + booking.getBookingId());
+    }
+
+    private void updateAvailabilityOnDelete(Booking deletedBooking){
+        RoomResponse roomResponse = roomClient.updateAvailabilityOfRoom
+                (deletedBooking.getRoomId(),
+                        UpdateRoomAvailability.builder()
+                                .availability("AVAILABLE")
+                                .build());
     }
 }
