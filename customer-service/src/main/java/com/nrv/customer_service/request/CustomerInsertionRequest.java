@@ -1,4 +1,4 @@
-package com.nrv.customer_service.model;
+package com.nrv.customer_service.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,30 +7,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Entity class for Customer. Represents the fields present in Customer database. This will
- * be used to map values from database in from of an Object.
+ * Request object to get data from client to insert information about a customer.
  *
  * @author Nirav Parekh
+ * @see com.nrv.customer_service.model.Customer
  * @since 1.0
  */
-@Document(collection = "customer") // Specify the collection name in MongoDB
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Customer {
-
-    @Id
-    private String customerId;
+public class CustomerInsertionRequest {
 
     @NotBlank(message = "First name is required")
     private String firstName;
@@ -48,7 +38,4 @@ public class Customer {
     private String password;
 
     private String address;
-
-    private LocalDate createdAt;
-
 }
