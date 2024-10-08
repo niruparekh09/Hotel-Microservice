@@ -5,6 +5,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/AuthService
+      auto-index-creation: true
   # Admin Server Config
   boot:
     admin:
