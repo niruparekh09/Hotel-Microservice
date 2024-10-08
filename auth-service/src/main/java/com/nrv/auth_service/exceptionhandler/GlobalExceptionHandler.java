@@ -1,8 +1,8 @@
-package com.nrv.booking_service.exceptionhandler;
+package com.nrv.auth_service.exceptionhandler;
 
-import com.nrv.booking_service.exception.ResourceNotFoundException;
-import com.nrv.booking_service.exception.RoomAlreadyBookedException;
-import com.nrv.booking_service.response.APIResponse;
+import com.nrv.auth_service.exception.NotAuthorizedException;
+import com.nrv.auth_service.exception.ResourceNotFoundException;
+import com.nrv.auth_service.response.APIResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -19,8 +19,7 @@ import java.util.Map;
 
 /**
  * Class to handle any exception thrown in our server. This is a global level so it will
- * handle all exceptions thrown at any level. It can also handle custom exceptions
- * {@link com.nrv.customer_service.exception}
+ * handle all exceptions thrown at any level. It can also handle custom exceptions.
  *
  * @author Nirav Parekh
  * @since 1.0
@@ -54,10 +53,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(RoomAlreadyBookedException.class)
-    public ResponseEntity<?> handleResourceNotFound(RoomAlreadyBookedException ex) {
+    @ExceptionHandler(NotAuthorizedException.class)
+    public ResponseEntity<?> handleNotAuthorized(NotAuthorizedException ex) {
         logger.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new APIResponse(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new APIResponse(ex.getMessage()));
     }
 
     /*All other exceptions*/

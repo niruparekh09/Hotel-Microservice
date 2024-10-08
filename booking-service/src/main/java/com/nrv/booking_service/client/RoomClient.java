@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * Client Class for inter service communication with Room-Service
+ * Client Interface for inter service communication with Room-Service
  *
  * @author Nirav Parekh
  * @since 1.0

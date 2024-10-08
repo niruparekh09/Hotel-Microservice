@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Class to handle any exception thrown in our server. This is a global level so it will
  * handle all exceptions thrown at any level. It can also handle custom exceptions
- * {@link com.nrv.room_service.exception}
+ * {@link com.nrv.customer_service.exception}
  *
  * @author Nirav Parekh
  * @since 1.0
