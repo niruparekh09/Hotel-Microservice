@@ -17,8 +17,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 public class RoomServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(RoomServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(RoomServiceApplication.class, args);
+    }
 
 }

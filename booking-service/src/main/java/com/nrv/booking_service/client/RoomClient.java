@@ -3,7 +3,6 @@ package com.nrv.booking_service.client;
 import com.nrv.booking_service.response.RoomResponse;
 import com.nrv.booking_service.response.UpdateRoomAvailability;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface RoomClient {
 
     @PutMapping("api/rooms/availability/{id}")
-    public RoomResponse updateAvailabilityOfRoom
+    RoomResponse updateAvailabilityOfRoom
             (@PathVariable String id, @RequestBody UpdateRoomAvailability availability);
 
     @GetMapping("/api/rooms/{id}")
-    public RoomResponse getARoom(@PathVariable String id);
+    RoomResponse getARoom(@PathVariable String id);
 }

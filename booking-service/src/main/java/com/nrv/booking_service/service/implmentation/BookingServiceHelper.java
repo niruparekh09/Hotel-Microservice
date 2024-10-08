@@ -55,7 +55,7 @@ public class BookingServiceHelper {
                 .build();
     }
 
-    public static void checkUpdate(BookingInsertionRequest updateBooking, Booking existingBooking){
+    public static void checkUpdate(BookingInsertionRequest updateBooking, Booking existingBooking) {
         if (!updateBooking.getCustomerId().isEmpty()) {
             existingBooking.setCustomerId(updateBooking.getCustomerId());
         }

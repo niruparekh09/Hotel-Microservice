@@ -10,5 +10,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @see Customer
  * @since 1.0
  */
-public interface CustomerRepository extends MongoRepository<Customer,String> {
+public interface CustomerRepository extends MongoRepository<Customer, String> {
 }

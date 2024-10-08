@@ -1,4 +1,5 @@
 package com.nrv.room_service.log;
+
 /**
  * Enum class for room log messages.
  *
@@ -12,13 +13,12 @@ public enum RoomLogMessage {
     ROOM_ADD("Add a room by id: {}"),
     ROOM_UPDATE("Update a room by id: {}"),
     ROOM_UPDATE_AVAILABILITY("Update a room's availability by id: {}"),
-    ROOM_DELETE("Delete a room by id: {}")
-    ;
+    ROOM_DELETE("Delete a room by id: {}");
 
 
     private final String message;
 
-    RoomLogMessage(String message){
+    RoomLogMessage(String message) {
         this.message = message;
     }
 
