@@ -6,6 +6,8 @@ import com.nrv.customer_service.response.CustomerResponse;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Helper class for Customer Service.
@@ -46,20 +48,16 @@ public class CustomerServiceHelper {
 
     public static void checkUpdate(CustomerInsertionRequest updateCustomer, Customer existingCustomer) {
         // Update fields selectively
-        if (!updateCustomer.getFirstName().isEmpty()) {
-            existingCustomer.setFirstName(updateCustomer.getFirstName());
-        }
-        if (!updateCustomer.getLastName().isEmpty()) {
-            existingCustomer.setLastName(updateCustomer.getLastName());
-        }
-        if (!updateCustomer.getEmailId().isEmpty()) {
-            existingCustomer.setEmailId(updateCustomer.getEmailId());
-        }
-        if (!updateCustomer.getPassword().isEmpty()) {
-            existingCustomer.setPassword(updateCustomer.getPassword());
-        }
-        if (!updateCustomer.getAddress().isEmpty()) {
-            existingCustomer.setAddress(updateCustomer.getAddress());
-        }
+        updateIfPresent(updateCustomer.getFirstName(), existingCustomer::setFirstName);
+        updateIfPresent(updateCustomer.getLastName(), existingCustomer::setLastName);
+        updateIfPresent(updateCustomer.getEmailId(), existingCustomer::setEmailId);
+        updateIfPresent(updateCustomer.getPassword(), existingCustomer::setPassword);
+        updateIfPresent(updateCustomer.getAddress(), existingCustomer::setAddress);
+    }
+
+    private static void updateIfPresent(String value, Consumer<String> setter) {
+        Optional.ofNullable(value)
+                .filter(v -> !v.isEmpty())
+                .ifPresent(setter);
     }
 }
