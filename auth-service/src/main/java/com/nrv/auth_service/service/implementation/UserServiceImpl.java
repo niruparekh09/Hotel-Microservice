@@ -41,13 +41,14 @@ public class UserServiceImpl implements UserService {
     public UserResponse addAnUser(UserInsertionRequest newUser) {
         User user = getUser(newUser);
         UserResponse response = getUserResponse(user);
+        repository.save(user);
         logger.info(UserLogMessage.USER_ADD.getMessage(), user.getUserId());
         return response;
     }
 
     @Override
     public UserResponse updateAnUser(String userId, UserInsertionRequest updateUser) {
-        User user = repository.findById(userId)
+        User user = repository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found by id: " + userId));
         if (!user.getUserId().equals(updateUser.getUserId())) {
             user.setUserId(updateUser.getUserId());
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public APIResponse deleteAnUser(String userId) {
-        User user = repository.findById(userId)
+        User user = repository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found by id: " + userId));
 
         if (user.getRole().equals(Role.ROLE_ADMIN)) {

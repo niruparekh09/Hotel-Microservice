@@ -90,6 +90,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     ResponseEntity<APIResponse> deleteAnAuthUser(@PathVariable String id) {
+        System.out.println(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(service.deleteAnUser(id));

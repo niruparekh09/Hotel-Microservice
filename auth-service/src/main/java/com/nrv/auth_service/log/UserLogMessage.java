@@ -8,7 +8,7 @@ package com.nrv.auth_service.log;
  */
 public enum UserLogMessage {
     User_LIST_GET("Get All User"),
-    USER_ADD("Add a Customer by id: {}"),
+    USER_ADD("Added a User by id: {}"),
     USER_DELETE("User Delete with id: {}"),
     USER_UPDATE("User Updated with id: {}"),
     USER_LOGIN("User Logged In with id: {}");
