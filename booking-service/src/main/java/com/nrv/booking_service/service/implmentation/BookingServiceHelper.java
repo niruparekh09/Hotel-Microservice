@@ -6,6 +6,7 @@ import com.nrv.booking_service.response.BookingResponse;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper class for Room Service.
@@ -56,17 +57,14 @@ public class BookingServiceHelper {
     }
 
     public static void checkUpdate(BookingInsertionRequest updateBooking, Booking existingBooking) {
-        if (!updateBooking.getCustomerId().isEmpty()) {
-            existingBooking.setCustomerId(updateBooking.getCustomerId());
-        }
-        if (!updateBooking.getRoomId().isEmpty()) {
-            existingBooking.setRoomId(updateBooking.getRoomId());
-        }
-        if (updateBooking.getCheckInDate() != null) {
-            existingBooking.setCheckInDate(updateBooking.getCheckInDate());
-        }
-        if (updateBooking.getCheckOutDate() != null) {
-            existingBooking.setCheckOutDate(updateBooking.getCheckOutDate());
-        }
+        Optional.ofNullable(updateBooking.getCustomerId())
+                .filter(customerId -> !customerId.isEmpty())
+                .ifPresent(existingBooking::setCustomerId);
+        Optional.ofNullable(updateBooking.getRoomId())
+                .filter(roomId -> !roomId.isEmpty())
+                .ifPresent(existingBooking::setRoomId);
+        Optional.ofNullable(updateBooking.getCheckInDate()).ifPresent(existingBooking::setCheckInDate);
+        Optional.ofNullable(updateBooking.getCheckOutDate()).ifPresent(existingBooking::setCheckOutDate);
+
     }
 }
