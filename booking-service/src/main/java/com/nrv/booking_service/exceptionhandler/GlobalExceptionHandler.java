@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Class to handle any exception thrown in our server. This is a global level so it will
  * handle all exceptions thrown at any level. It can also handle custom exceptions
- * {@link com.nrv.room_service.exception}
+ * {@link com.nrv.customer_service.exception}
  *
  * @author Nirav Parekh
  * @since 1.0
@@ -37,8 +37,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -63,8 +62,7 @@ public class GlobalExceptionHandler {
 
     /*All other exceptions*/
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException
-    (Exception e) {
+    public ResponseEntity<?> handleException(Exception e) {
         logger.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new APIResponse(e.getMessage()));
     }
