@@ -4,16 +4,7 @@ spring:
   # DB Config
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: RoomService
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+      uri: mongodb://localhost:27017/RoomService
   # Admin Server Config
   boot:
     admin:
