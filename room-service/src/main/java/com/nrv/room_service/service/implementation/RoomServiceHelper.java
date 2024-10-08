@@ -7,6 +7,7 @@ import com.nrv.room_service.request.RoomInsertionRequest;
 import com.nrv.room_service.response.RoomResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper class for Room Service.
@@ -62,26 +63,31 @@ public class RoomServiceHelper {
     }
 
     public static void checkUpdate(RoomInsertionRequest updateRoom, Room existingRoom) {
-        // Update fields selectively
-        if (!updateRoom.getRoomNumber().isEmpty()) {
-            existingRoom.setRoomNumber(updateRoom.getRoomNumber());
-        }
-        if (updateRoom.getRoomType() != null) {
-            Type roomType = Type.valueOf(updateRoom.getRoomType().toUpperCase());
-            existingRoom.setRoomType(roomType);
-            existingRoom.setPricePerNight(roomType.getPricePerNight());
-        }
-        if (updateRoom.getAvailability() != null) {
-            existingRoom.setAvailability(Availability.valueOf(updateRoom.getAvailability()));
-        }
-        if (!updateRoom.getImage().isEmpty()) {
-            existingRoom.setImage(updateRoom.getImage());
-        }
-        if (updateRoom.getFloor() != null) {
-            existingRoom.setFloor(updateRoom.getFloor());
-        }
-        if (!updateRoom.getDescription().isEmpty()) {
-            existingRoom.setDescription(updateRoom.getDescription());
-        }
+        Optional.ofNullable(updateRoom.getRoomNumber())
+                .filter(roomNumber -> !roomNumber.isEmpty())
+                .ifPresent(existingRoom::setRoomNumber);
+
+        Optional.ofNullable(updateRoom.getRoomType())
+                .map(String::toUpperCase)
+                .map(Type::valueOf)
+                .ifPresent(roomType -> {
+                    existingRoom.setRoomType(roomType);
+                    existingRoom.setPricePerNight(roomType.getPricePerNight());
+                });
+
+        Optional.ofNullable(updateRoom.getAvailability())
+                .map(Availability::valueOf)
+                .ifPresent(existingRoom::setAvailability);
+
+        Optional.ofNullable(updateRoom.getImage())
+                .filter(image -> !image.isEmpty())
+                .ifPresent(existingRoom::setImage);
+
+        Optional.ofNullable(updateRoom.getFloor())
+                .ifPresent(existingRoom::setFloor);
+
+        Optional.ofNullable(updateRoom.getDescription())
+                .filter(description -> !description.isEmpty())
+                .ifPresent(existingRoom::setDescription);
     }
 }
