@@ -25,6 +25,8 @@ public class BookingResponse {
 
     private String roomId;
 
+    private String paymentId;
+
     private LocalDate checkInDate;
 
     private LocalDate checkOutDate;

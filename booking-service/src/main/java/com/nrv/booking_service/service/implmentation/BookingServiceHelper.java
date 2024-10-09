@@ -33,6 +33,7 @@ public class BookingServiceHelper {
                 .bookingId(booking.getBookingId())
                 .roomId(booking.getRoomId())
                 .customerId(booking.getCustomerId())
+                .paymentId(booking.getPaymentId())
                 .checkInDate(booking.getCheckInDate())
                 .checkOutDate(booking.getCheckOutDate())
                 .createdAt(booking.getCreatedAt())
@@ -41,7 +42,7 @@ public class BookingServiceHelper {
     }
 
     // Method to add new room
-    public static Booking getBooking(BookingInsertionRequest newBookingRequest, double totalPrice) {
+    public static Booking getBooking(BookingInsertionRequest newBookingRequest, double totalPrice, String paymentId) {
         if (newBookingRequest == null) {
             throw new RuntimeException("Booking cannot be null");
         }
@@ -49,6 +50,7 @@ public class BookingServiceHelper {
         return Booking.builder()
                 .customerId(newBookingRequest.getCustomerId())
                 .roomId(newBookingRequest.getRoomId())
+                .paymentId(paymentId)
                 .checkInDate(newBookingRequest.getCheckInDate())
                 .checkOutDate(newBookingRequest.getCheckOutDate())
                 .createdAt(LocalDate.now()) // We will manually add when booking is created

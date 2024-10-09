@@ -35,6 +35,9 @@ public class Booking {
     @NotBlank(message = "Room ID is required")
     private String roomId;
 
+    @NotBlank(message = "Payment ID is required")
+    private String paymentId;
+
     @NotNull(message = "Check-in date is required")
     private LocalDate checkInDate;
 
