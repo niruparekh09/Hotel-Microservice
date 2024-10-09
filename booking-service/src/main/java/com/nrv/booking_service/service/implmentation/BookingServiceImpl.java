@@ -88,6 +88,7 @@ public class BookingServiceImpl implements BookingService {
         double totalPrice = totalStay * roomPricePerNight;
         String paymentId = pay(newBooking.getCustomerId(), totalPrice);
         updateAvailabilityOfRoom(newBooking, paymentId);
+
         Booking booking = getBooking(newBooking, totalPrice, paymentId);
         repository.save(booking);
         BookingResponse bookingResponse = getBookingResponse(booking);
