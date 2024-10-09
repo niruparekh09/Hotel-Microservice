@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface CustomerService {
     /**
-     * Method to fetch all the room present in DB.
+     * Method to fetch all the customer present in DB.
      *
      * @author Nirav Parekh
      * @see CustomerResponse

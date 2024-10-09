@@ -22,7 +22,7 @@ import java.util.List;
 import static com.nrv.customer_service.service.implementation.CustomerServiceHelper.*;
 
 /**
- * Service implementation class for Room. It contains the methods for service logic.
+ * Service implementation class for Customer. It contains the methods for service logic.
  *
  * @author Nirav Parekh
  * @see CustomerServiceHelper
