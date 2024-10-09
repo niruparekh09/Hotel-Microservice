@@ -25,6 +25,13 @@ import java.util.List;
 
 import static com.nrv.booking_service.service.implmentation.BookingServiceHelper.*;
 
+/**
+ * Service implementation class for Booking. It contains the methods for service logic.
+ *
+ * @author Nirav Parekh
+ * @see BookingServiceHelper
+ * @since 1.0
+ */
 @Service
 @Transactional
 public class BookingServiceImpl implements BookingService {
