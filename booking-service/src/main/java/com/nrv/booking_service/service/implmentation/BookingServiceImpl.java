@@ -1,5 +1,6 @@
 package com.nrv.booking_service.service.implmentation;
 
+import com.nrv.booking_service.client.PaymentClient;
 import com.nrv.booking_service.client.RoomClient;
 import com.nrv.booking_service.exception.InvalidArgumentException;
 import com.nrv.booking_service.exception.ResourceNotFoundException;
@@ -8,10 +9,8 @@ import com.nrv.booking_service.log.BookingLogMessage;
 import com.nrv.booking_service.model.Booking;
 import com.nrv.booking_service.repository.BookingRepository;
 import com.nrv.booking_service.request.BookingInsertionRequest;
-import com.nrv.booking_service.response.APIResponse;
-import com.nrv.booking_service.response.BookingResponse;
-import com.nrv.booking_service.response.RoomResponse;
-import com.nrv.booking_service.response.UpdateRoomAvailability;
+import com.nrv.booking_service.request.PaymentRequest;
+import com.nrv.booking_service.response.*;
 import com.nrv.booking_service.service.BookingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +42,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     RoomClient roomClient;
+
+    @Autowired
+    PaymentClient paymentClient;
 
     @Override
     public List<BookingResponse> fetchAllBookings() {
@@ -77,23 +79,32 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse addABooking(BookingInsertionRequest newBooking) {
         // Check if room is booked or not
-        checkBooking(newBooking.getRoomId(), newBooking);
-        // Once we do a booking we will put Room in HOLD
-        RoomResponse roomResponse = updateAvailabilityOfRoom(newBooking);
+        double roomPricePerNight = checkBooking(newBooking.getRoomId(), newBooking);
         int totalStay = (int) ChronoUnit.DAYS.between
                 (newBooking.getCheckInDate(),
                         newBooking.getCheckOutDate());
         // If a person is checking in and out in single day then he still needs to pay one nights price
         totalStay = (totalStay == 0) ? 1 : totalStay;
-        Booking booking = getBooking(newBooking, totalStay * roomResponse.getPricePerNight());
+        double totalPrice = totalStay * roomPricePerNight;
+        String paymentId = pay(newBooking.getCustomerId(), totalPrice);
+        updateAvailabilityOfRoom(newBooking, paymentId);
+        Booking booking = getBooking(newBooking, totalPrice,paymentId);
         repository.save(booking);
         BookingResponse bookingResponse = getBookingResponse(booking);
         logger.info(BookingLogMessage.BOOKING_ADD.getMessage(), bookingResponse.getBookingId());
         return bookingResponse;
     }
 
+    private String pay(String customerId, double totalPrice) {
+        PaymentResponse paymentResponse = paymentClient.addAPayment(PaymentRequest.builder()
+                .customerId(customerId)
+                .amount(totalPrice)
+                .build());
+        return paymentResponse.getPaymentId();
+    }
+
     // Checking Booking Details
-    private void checkBooking(String roomId, BookingInsertionRequest newBooking) {
+    private double checkBooking(String roomId, BookingInsertionRequest newBooking) {
 
         // Check if date is not in past
         if (newBooking.getCheckInDate().isBefore(LocalDate.now())) {
@@ -117,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookingList = repository.findByRoomId(roomId);
         // No booking available with this room id
         if (bookingList.isEmpty()) {
-            return;
+            return roomResponse.getPricePerNight();
         }
 
         for (Booking existingBooking : bookingList) {
@@ -129,17 +140,19 @@ public class BookingServiceImpl implements BookingService {
                 }
             }
         }
+
+        return roomResponse.getPricePerNight();
     }
 
     // Updating Availability of room
-    private RoomResponse updateAvailabilityOfRoom(BookingInsertionRequest newBooking) {
+    private void updateAvailabilityOfRoom(BookingInsertionRequest newBooking, String paymentId) {
         RoomResponse roomResponse = roomClient.updateAvailabilityOfRoom
                 (newBooking.getRoomId(),
                         UpdateRoomAvailability.builder()
                                 .availability("HOLD")
                                 .build());
         // Once payment is over we will put Room in BOOKED
-        if (true) { // Add payment client in here, Once payment is successful, this statement will be complete
+        if (!paymentId.isEmpty()) { // If we get payment ID then Payment done successfully
             roomClient.updateAvailabilityOfRoom
                     (newBooking.getRoomId(),
                             UpdateRoomAvailability.builder()
@@ -149,7 +162,6 @@ public class BookingServiceImpl implements BookingService {
         }
         logger.info("Updated room with id: {} from Room Client. It's now {}"
                 , roomResponse.getRoomId(), roomResponse.getAvailability());
-        return roomResponse;
     }
 
     @Override
