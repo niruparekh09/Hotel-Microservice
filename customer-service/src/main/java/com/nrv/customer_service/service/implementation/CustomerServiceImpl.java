@@ -64,10 +64,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponse addACustomer(CustomerInsertionRequest newCustomer) {
+        String notEncodedPassword = newCustomer.getPassword();
         newCustomer.setPassword(encoder.encode(newCustomer.getPassword())); // Encoding Password
         Customer customer = getCustomer(newCustomer);
         Customer persistedCustomer = repository.save(customer);
-        addCustomerToAuthService(persistedCustomer.getEmailId(), persistedCustomer.getPassword()); // Adding Customer to Auth Service
+        addCustomerToAuthService(persistedCustomer.getEmailId(), notEncodedPassword); // Adding Customer to Auth Service
         CustomerResponse response = getCustomerResponse(persistedCustomer);
         logger.info(CustomerLogMessage.CUSTOMER_ADD.getMessage(), persistedCustomer.getCustomerId());
         return response;
