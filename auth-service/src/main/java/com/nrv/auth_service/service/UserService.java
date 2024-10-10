@@ -1,6 +1,7 @@
 package com.nrv.auth_service.service;
 
 import com.nrv.auth_service.request.UserInsertionRequest;
+import com.nrv.auth_service.request.UserLoginRequest;
 import com.nrv.auth_service.response.APIResponse;
 import com.nrv.auth_service.response.UserResponse;
 
@@ -33,6 +34,15 @@ public interface UserService {
     UserResponse addAnUser(UserInsertionRequest newUser);
 
     /**
+     * Method to a user in DB.
+     *
+     * @author Nirav Parekh
+     * @see APIResponse
+     * @since 1.0
+     */
+    APIResponse login(UserLoginRequest loginUser);
+
+    /**
      * Method to update a user from DB.
      *
      * @author Nirav Parekh
@@ -50,13 +60,5 @@ public interface UserService {
      */
     APIResponse deleteAnUser(String userId);
 
-    /**
-     * Method to a user in DB.
-     *
-     * @author Nirav Parekh
-     * @see LoginResponse
-     * @since 1.0
-     */
-    /*LoginResponse login();*/
 
 }
