@@ -24,3 +24,5 @@ management:
     web:
       exposure:
         include: '*'
+
+API-KEY: 3f5412e1e987d1808b7196426acb19ce594b847a21eb2a9d4e008a92885a46f7
