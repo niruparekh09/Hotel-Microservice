@@ -13,8 +13,8 @@ spring:
 # Eureka Discovery Server Config
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+    service-url:
+      default-zone: http://localhost:8761/eureka
 server:
   port: 8082
 # Actuator Config
