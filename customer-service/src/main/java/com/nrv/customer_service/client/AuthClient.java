@@ -4,8 +4,11 @@ import com.nrv.customer_service.request.UserInsertionRequest;
 import com.nrv.customer_service.response.APIResponse;
 import com.nrv.customer_service.response.UserResponse;
 import jakarta.validation.Valid;
+import org.apache.catalina.LifecycleState;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Client Interface for inter service communication with Auth-Service
@@ -17,7 +20,10 @@ import org.springframework.web.bind.annotation.*;
 public interface AuthClient {
 
 
-    @PostMapping("/api/auth")
+    @GetMapping("/api/auth")
+    List<UserResponse> getAllAuthUser();
+
+    @PostMapping("/api/auth/register")
     UserResponse addAnAuthUser(@RequestBody @Valid UserInsertionRequest newAuthUser);
 
     @PutMapping("/api/auth/{id}")

@@ -9,6 +9,7 @@ import com.nrv.customer_service.request.CustomerInsertionRequest;
 import com.nrv.customer_service.request.UserInsertionRequest;
 import com.nrv.customer_service.response.APIResponse;
 import com.nrv.customer_service.response.CustomerResponse;
+import com.nrv.customer_service.response.UserResponse;
 import com.nrv.customer_service.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public void addCustomerToAuthService(String emailId, String password) {
+        List<UserResponse> allAuthUser = authClient.getAllAuthUser();
+        boolean matchedUser = allAuthUser
+                .stream()
+                .anyMatch(userResponse -> userResponse
+                        .getUserId()
+                        .equals(emailId));
+        if (matchedUser) {
+            return;
+        }
         UserInsertionRequest authUserInsertion = UserInsertionRequest.builder()
                 .userId(emailId)
                 .password(password)

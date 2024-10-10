@@ -52,7 +52,7 @@ public class UserController {
      * @see UserInsertionRequest
      * @since 1.0
      */
-    @PostMapping
+    @PostMapping("/register")
     ResponseEntity<UserResponse> addAnAuthUser(@RequestBody @Valid UserInsertionRequest newAuthUser) {
         return ResponseEntity
                 .status(HttpStatus.OK)
