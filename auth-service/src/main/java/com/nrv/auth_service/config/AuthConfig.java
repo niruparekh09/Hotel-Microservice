@@ -1,6 +1,5 @@
 package com.nrv.auth_service.config;
 
-import jakarta.ws.rs.HttpMethod;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +33,7 @@ public class AuthConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
 //                        .requestMatchers(HttpMethod.PUT, "/api/auth/**").access()
 //                        .requestMatchers(HttpMethod.DELETE, "/api/auth/**").access()
                 )
