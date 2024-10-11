@@ -31,3 +31,5 @@ eureka:
       default-zone: http://localhost:8761/eureka
 server:
   port: 9090
+
+SECRET: 612c7ded6c80b46e1d2e6c601a93d5a9d944a5b4754d74feb664533e387a638f
