@@ -2,7 +2,6 @@ package com.nrv.booking_service.client;
 
 import com.nrv.booking_service.response.CustomerResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 

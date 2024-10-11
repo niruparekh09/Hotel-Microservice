@@ -70,7 +70,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                         }
                     }
 
-                     loggedInUser = exchange.getRequest()
+                    loggedInUser = exchange.getRequest()
                             .mutate()
                             .header("loggedInUser", jwtUtil.extractUsername(authHeader))
                             .build();

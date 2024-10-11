@@ -92,7 +92,7 @@ public class BookingController {
             @RequestHeader("loggedInUser") String loggedInUser) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(service.addABooking(newBooking,loggedInUser));
+                .body(service.addABooking(newBooking, loggedInUser));
     }
 
     /**

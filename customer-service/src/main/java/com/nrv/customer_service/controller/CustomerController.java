@@ -89,10 +89,10 @@ public class CustomerController {
     ResponseEntity<CustomerResponse>
     updateACustomer(@PathVariable String id,
                     @RequestBody @Valid CustomerInsertionRequest updateCustomer,
-                    @RequestHeader("loggedInUser") String loggedInUser ) {
+                    @RequestHeader("loggedInUser") String loggedInUser) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(service.updateCustomer(updateCustomer, id,loggedInUser));
+                .body(service.updateCustomer(updateCustomer, id, loggedInUser));
     }
 
     /**
