@@ -87,10 +87,12 @@ public class BookingController {
      * @since 1.0
      */
     @PostMapping()
-    ResponseEntity<BookingResponse> addABooking(@RequestBody @Valid BookingInsertionRequest newBooking) {
+    ResponseEntity<BookingResponse> addABooking(
+            @RequestBody @Valid BookingInsertionRequest newBooking,
+            @RequestHeader("loggedInUser") String loggedInUser) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(service.addABooking(newBooking));
+                .body(service.addABooking(newBooking,loggedInUser));
     }
 
     /**

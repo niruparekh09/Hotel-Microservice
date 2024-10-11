@@ -1,6 +1,7 @@
 package com.nrv.customer_service.service.implementation;
 
 import com.nrv.customer_service.client.AuthClient;
+import com.nrv.customer_service.exception.NotAuthorizedException;
 import com.nrv.customer_service.exception.ResourceNotFoundException;
 import com.nrv.customer_service.log.CustomerLogMessage;
 import com.nrv.customer_service.model.Customer;
@@ -93,10 +94,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse updateCustomer(CustomerInsertionRequest updateCustomer, String customerId) {
+    public CustomerResponse updateCustomer(CustomerInsertionRequest updateCustomer, String customerId, String loggedInUser) {
         Customer existingCustomer = repository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer with ID: " + customerId + " not found"));
-
+        if (!existingCustomer.getEmailId().equals(loggedInUser)) {
+            throw new NotAuthorizedException("You are not authorized for this operation");
+        }
         String previousEmail = existingCustomer.getEmailId(); // Saving previous mail for auth service before updation
         if (!updateCustomer.getPassword().isEmpty()) {
             updateCustomer.setPassword(encoder.encode(updateCustomer.getPassword())); // Encoding password

@@ -1,8 +1,10 @@
 package com.nrv.booking_service.service.implmentation;
 
+import com.nrv.booking_service.client.CustomerClient;
 import com.nrv.booking_service.client.PaymentClient;
 import com.nrv.booking_service.client.RoomClient;
 import com.nrv.booking_service.exception.InvalidArgumentException;
+import com.nrv.booking_service.exception.NotAuthorizedException;
 import com.nrv.booking_service.exception.ResourceNotFoundException;
 import com.nrv.booking_service.exception.RoomAlreadyBookedException;
 import com.nrv.booking_service.log.BookingLogMessage;
@@ -12,8 +14,7 @@ import com.nrv.booking_service.request.BookingInsertionRequest;
 import com.nrv.booking_service.request.PaymentRequest;
 import com.nrv.booking_service.response.*;
 import com.nrv.booking_service.service.BookingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +34,8 @@ import static com.nrv.booking_service.service.implmentation.BookingServiceHelper
  */
 @Service
 @Transactional
+@Slf4j
 public class BookingServiceImpl implements BookingService {
-
-    Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     @Autowired
     BookingRepository repository;
@@ -46,11 +46,14 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     PaymentClient paymentClient;
 
+    @Autowired
+    CustomerClient customerClient;
+
     @Override
     public List<BookingResponse> fetchAllBookings() {
         List<Booking> bookings = repository.findAll();
         List<BookingResponse> bookingResponseList = bookingListMapper(bookings);
-        logger.info(BookingLogMessage.BOOKING_LIST_GET.getMessage());
+        log.info(BookingLogMessage.BOOKING_LIST_GET.getMessage());
         return bookingResponseList;
     }
 
@@ -59,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = repository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
         BookingResponse bookingResponse = getBookingResponse(booking);
-        logger.info(BookingLogMessage.BOOKING_GET.getMessage(), bookingResponse.getBookingId());
+        log.info(BookingLogMessage.BOOKING_GET.getMessage(), bookingResponse.getBookingId());
         return bookingResponse;
     }
 
@@ -68,16 +71,19 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookingListByCustomerId = repository.findByCustomerId(customerId);
         List<BookingResponse> bookingResponseList = bookingListMapper(bookingListByCustomerId);
         if (bookingListByCustomerId.isEmpty()) {
-            logger.info("No Booking for customer with id: {}", customerId);
+            log.info("No Booking for customer with id: {}", customerId);
         } else {
-            logger.info(BookingLogMessage.BOOKING_GET_BY_CUSTOMER.getMessage(),
+            log.info(BookingLogMessage.BOOKING_GET_BY_CUSTOMER.getMessage(),
                     bookingResponseList.get(0).getCustomerId());
         }
         return bookingResponseList;
     }
 
     @Override
-    public BookingResponse addABooking(BookingInsertionRequest newBooking) {
+    public BookingResponse addABooking(BookingInsertionRequest newBooking, String loggedInUser) {
+        if (!checkLoggedInCustomer(newBooking.getCustomerId(), loggedInUser)) {
+            throw new NotAuthorizedException("You are not authorized for this operation");
+        }
         // Check if room is booked or not
         double roomPricePerNight = checkBooking(newBooking.getRoomId(), newBooking);
         int totalStay = (int) ChronoUnit.DAYS.between
@@ -92,9 +98,17 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = getBooking(newBooking, totalPrice, paymentId);
         repository.save(booking);
         BookingResponse bookingResponse = getBookingResponse(booking);
-        logger.info(BookingLogMessage.BOOKING_ADD.getMessage(), bookingResponse.getBookingId());
+        log.info(BookingLogMessage.BOOKING_ADD.getMessage(), bookingResponse.getBookingId());
         return bookingResponse;
     }
+
+    private boolean checkLoggedInCustomer(String customerId, String loggedInUser) {
+        CustomerResponse customer = customerClient.getACustomer(customerId);
+        log.info("Customer: {} |----| Logged-In User: {}",
+                customer.getFirstName() + "-" + customer.getEmailId(), loggedInUser);
+        return customer.getEmailId().equals(loggedInUser);
+    }
+
 
     private String pay(String customerId, double totalPrice) {
         PaymentResponse paymentResponse = paymentClient.addAPayment(PaymentRequest.builder()
@@ -118,7 +132,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         RoomResponse roomResponse = roomClient.getARoom(roomId);
-        logger.info("Fetch room with id: {} from Room Client", roomResponse.getRoomId());
+        log.info("Fetch room with id: {} from Room Client", roomResponse.getRoomId());
         // Checking If room is available or not
         if (roomResponse.getAvailability().equals("BOOKED")
                 || roomResponse.getAvailability().equals("HOLD")) {
@@ -161,7 +175,7 @@ public class BookingServiceImpl implements BookingService {
                                     .build());
 
         }
-        logger.info("Updated room with id: {} from Room Client. It's now {}"
+        log.info("Updated room with id: {} from Room Client. It's now {}"
                 , roomResponse.getRoomId(), roomResponse.getAvailability());
     }
 
@@ -173,7 +187,7 @@ public class BookingServiceImpl implements BookingService {
         Booking persistedBooking = repository.save(existingBooking);
         BookingResponse bookingResponse = getBookingResponse(persistedBooking);
 
-        logger.info(BookingLogMessage.BOOKING_UPDATE.getMessage(), bookingResponse.getBookingId());
+        log.info(BookingLogMessage.BOOKING_UPDATE.getMessage(), bookingResponse.getBookingId());
         return bookingResponse;
     }
 
@@ -183,7 +197,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
         repository.delete(booking);
         updateAvailabilityOnDelete(booking);
-        logger.info(BookingLogMessage.BOOKING_DELETE.getMessage(), booking.getBookingId());
+        log.info(BookingLogMessage.BOOKING_DELETE.getMessage(), booking.getBookingId());
         return new APIResponse("Booking deleted by id: " + booking.getBookingId());
     }
 

@@ -46,12 +46,13 @@ public interface BookingService {
     /**
      * Method to add a booking in DB.
      *
-     * @param newBooking New Booking
+     * @param newBooking   New Booking
+     * @param loggedInUser
      * @author Nirav Parekh
      * @see BookingInsertionRequest
      * @since 1.0
      */
-    BookingResponse addABooking(BookingInsertionRequest newBooking);
+    BookingResponse addABooking(BookingInsertionRequest newBooking, String loggedInUser);
 
     /**
      * Method to update a booking in DB.

@@ -1,9 +1,9 @@
 package com.nrv.customer_service.exceptionhandler;
 
+import com.nrv.customer_service.exception.NotAuthorizedException;
 import com.nrv.customer_service.exception.ResourceNotFoundException;
 import com.nrv.customer_service.response.APIResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +26,12 @@ import java.util.Map;
  */
 @Component
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<APIResponse> handleTypeMismatch(TypeMismatchException ex) {
-        logger.error("Invalid UUID format");
+        log.error("Invalid UUID format");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new APIResponse("Invalid UUID format"));
     }
 
@@ -50,15 +50,21 @@ public class GlobalExceptionHandler {
     /*Custom Exceptions*/
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFound(ResourceNotFoundException ex) {
-        logger.error(ex.getMessage());
+        log.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(NotAuthorizedException.class)
+    public ResponseEntity<?> handleNotAuthorized(NotAuthorizedException ex) {
+        log.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new APIResponse(ex.getMessage()));
     }
 
     /*All other exceptions*/
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException
     (Exception e) {
-        logger.error(e.getMessage());
+        log.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new APIResponse(e.getMessage()));
     }
 }

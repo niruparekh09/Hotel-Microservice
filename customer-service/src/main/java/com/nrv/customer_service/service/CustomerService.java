@@ -46,13 +46,14 @@ public interface CustomerService {
     /**
      * Method to update a customer.
      *
-     * @param customerId id of customer to be updated
-     * @param updateRoom update room
+     * @param updateRoom   update room
+     * @param customerId   id of customer to be updated
+     * @param loggedInUser Logged in user
      * @author Nirav Parekh
      * @see CustomerInsertionRequest
      * @since 1.0
      */
-    CustomerResponse updateCustomer(CustomerInsertionRequest updateRoom, String customerId);
+    CustomerResponse updateCustomer(CustomerInsertionRequest updateRoom, String customerId, String loggedInUser);
 
     /**
      * Method to delete a customer information.

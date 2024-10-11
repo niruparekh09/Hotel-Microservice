@@ -52,7 +52,7 @@ public class CustomerController {
      * @since 1.0
      */
     @GetMapping("/{id}")
-    ResponseEntity<CustomerResponse> getARoom(@PathVariable String id) {
+    ResponseEntity<CustomerResponse> getACustomer(@PathVariable String id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(service.fetchACustomer(id));
@@ -69,7 +69,8 @@ public class CustomerController {
      * @since 1.0
      */
     @PostMapping()
-    ResponseEntity<CustomerResponse> addACustomer(@RequestBody @Valid CustomerInsertionRequest newCustomer) {
+    ResponseEntity<CustomerResponse>
+    addACustomer(@RequestBody @Valid CustomerInsertionRequest newCustomer) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(service.addACustomer(newCustomer));
@@ -87,10 +88,11 @@ public class CustomerController {
     @PutMapping("/{id}")
     ResponseEntity<CustomerResponse>
     updateACustomer(@PathVariable String id,
-                    @RequestBody @Valid CustomerInsertionRequest updateCustomer) {
+                    @RequestBody @Valid CustomerInsertionRequest updateCustomer,
+                    @RequestHeader("loggedInUser") String loggedInUser ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(service.updateCustomer(updateCustomer, id));
+                .body(service.updateCustomer(updateCustomer, id,loggedInUser));
     }
 
     /**
