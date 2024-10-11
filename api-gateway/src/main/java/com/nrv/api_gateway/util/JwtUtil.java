@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.function.Function;
 
 /**
  * This class handles key management, token validation and claim extraction using JWTs.
@@ -29,6 +30,15 @@ public class JwtUtil {
     public String extractRole(final String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("role", String.class);  // Extracting the "role" claim
+    }
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
     // Private helper method to extract all claims
