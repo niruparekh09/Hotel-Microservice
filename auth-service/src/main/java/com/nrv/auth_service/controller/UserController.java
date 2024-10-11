@@ -122,7 +122,7 @@ public class UserController {
     ResponseEntity<APIResponse> deleteAnAuthUser(@PathVariable String id, HttpServletRequest request) {
 
         if (!validator.validate(request)) {
-            throw new NotAuthorizedException("You are not Authorized to update an user");
+            throw new NotAuthorizedException("You are not Authorized to Delete an user");
         }
 
         return ResponseEntity
